@@ -29,7 +29,7 @@ export async function signUpClient(
 
   if (planShareCode) {
     const { error: claimErr } = await sb.rpc("claim_plan_for_client", {
-      share_code: planShareCode,
+      p_share_code: planShareCode,
     });
     if (claimErr) {
       const m = claimErr.message;
