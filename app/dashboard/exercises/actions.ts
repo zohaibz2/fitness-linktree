@@ -1,7 +1,8 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { supabase } from "@/lib/supabase";
+import { createServerSupabase } from "@/lib/supabase-server";
+import { requireTrainer } from "@/lib/auth";
 import type { CreateExerciseState } from "./form-state";
 
 export async function createExercise(
@@ -20,12 +21,15 @@ export async function createExercise(
     return { status: "error", message: "Category is required." };
   }
 
-  const { error } = await supabase.from("exercises").insert({
+  const trainer = await requireTrainer();
+  const sb = await createServerSupabase();
+
+  const { error } = await sb.from("exercises").insert({
     name,
     description: description || null,
     video_url: videoUrl || null,
     category_id: categoryId,
-    created_by: null,
+    created_by: trainer.id,
   });
 
   if (error) {

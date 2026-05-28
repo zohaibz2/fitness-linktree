@@ -1,7 +1,8 @@
 "use server";
 
 import { redirect } from "next/navigation";
-import { supabase } from "@/lib/supabase";
+import { createServerSupabase } from "@/lib/supabase-server";
+import { requireTrainer } from "@/lib/auth";
 
 export type PlacedExerciseInput = {
   exerciseId: string;
@@ -28,22 +29,26 @@ export async function savePlan(input: SavePlanInput): Promise<SavePlanResult> {
   if (!clientName) return { error: "Client name is required." };
   if (!planName) return { error: "Plan name is required." };
 
-  const { data: clientRow, error: clientErr } = await supabase
-    .from("clients")
-    .insert({ name: clientName, subscription_status: "inactive" })
-    .select("id")
-    .single();
+  const trainer = await requireTrainer();
+  const sb = await createServerSupabase();
 
-  if (clientErr || !clientRow) {
-    return { error: `Failed to create client: ${clientErr?.message ?? "no row returned"}` };
+  const { data: newClientId, error: clientErr } = await sb.rpc(
+    "create_client_stub",
+    { p_name: clientName }
+  );
+
+  if (clientErr || !newClientId) {
+    return {
+      error: `Failed to create client: ${clientErr?.message ?? "no id returned"}`,
+    };
   }
 
-  const { data: planRow, error: planErr } = await supabase
+  const { data: planRow, error: planErr } = await sb
     .from("plans")
     .insert({
       name: planName,
-      client_id: clientRow.id,
-      trainer_id: null,
+      client_id: newClientId,
+      trainer_id: trainer.id,
       start_date: input.startDate || null,
       end_date: input.endDate || null,
     })
@@ -51,7 +56,9 @@ export async function savePlan(input: SavePlanInput): Promise<SavePlanResult> {
     .single();
 
   if (planErr || !planRow) {
-    return { error: `Failed to create plan: ${planErr?.message ?? "no row returned"}` };
+    return {
+      error: `Failed to create plan: ${planErr?.message ?? "no row returned"}`,
+    };
   }
 
   const rows: Array<{
@@ -82,7 +89,7 @@ export async function savePlan(input: SavePlanInput): Promise<SavePlanResult> {
   }
 
   if (rows.length > 0) {
-    const { error: peErr } = await supabase.from("plan_exercises").insert(rows);
+    const { error: peErr } = await sb.from("plan_exercises").insert(rows);
     if (peErr) {
       return { error: `Failed to save exercises: ${peErr.message}` };
     }

@@ -1,13 +1,14 @@
-import { supabase } from "@/lib/supabase";
+import { createServerSupabase } from "@/lib/supabase-server";
 import type { Category, ExerciseWithCategory } from "@/lib/database.types";
 import { NewExerciseForm } from "./new-exercise-form";
 
 export const dynamic = "force-dynamic";
 
 export default async function ExercisesPage() {
+  const sb = await createServerSupabase();
   const [categoriesRes, exercisesRes] = await Promise.all([
-    supabase.from("categories").select("*").order("name"),
-    supabase
+    sb.from("categories").select("*").order("name"),
+    sb
       .from("exercises")
       .select("*, categories(name)")
       .order("created_at", { ascending: false }),
@@ -18,7 +19,7 @@ export default async function ExercisesPage() {
   const loadError = categoriesRes.error?.message ?? exercisesRes.error?.message;
 
   return (
-    <div className="min-h-screen bg-zinc-50">
+    <div>
       <div className="mx-auto max-w-3xl px-6 py-10">
         <header className="mb-8">
           <h1 className="text-2xl font-bold text-zinc-900">Exercise Library</h1>

@@ -1,11 +1,9 @@
 import Link from "next/link";
-import { supabase } from "@/lib/supabase";
+import { createServerSupabase } from "@/lib/supabase-server";
+import { requireTrainer } from "@/lib/auth";
 import { CopyLinkButton } from "./copy-link-button";
 
 export const dynamic = "force-dynamic";
-
-// TODO(rls): once trainer auth lands, filter by .eq("trainer_id", session.user.id)
-// and add an RLS policy so trainers can only see their own plans.
 
 type PlanRow = {
   id: string;
@@ -58,16 +56,19 @@ function formatCreated(iso: string): string {
 }
 
 export default async function PlansListPage() {
-  const { data, error } = await supabase
+  const trainer = await requireTrainer();
+  const sb = await createServerSupabase();
+  const { data, error } = await sb
     .from("plans")
     .select("id, name, start_date, end_date, share_code, created_at, clients(name)")
+    .eq("trainer_id", trainer.id)
     .order("created_at", { ascending: false });
 
   const plans = (data as unknown as PlanRow[]) ?? [];
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL ?? null;
 
   return (
-    <div className="min-h-screen bg-zinc-50">
+    <div>
       <div className="mx-auto max-w-5xl px-6 py-10">
         <header className="mb-8 flex items-center justify-between">
           <div>

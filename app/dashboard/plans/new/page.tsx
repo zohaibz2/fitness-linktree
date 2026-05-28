@@ -1,11 +1,12 @@
-import { supabase } from "@/lib/supabase";
+import { createServerSupabase } from "@/lib/supabase-server";
 import type { ExerciseWithCategory } from "@/lib/database.types";
 import { PlanBuilder } from "./plan-builder";
 
 export const dynamic = "force-dynamic";
 
 export default async function NewPlanPage() {
-  const { data, error } = await supabase
+  const sb = await createServerSupabase();
+  const { data, error } = await sb
     .from("exercises")
     .select("id, name, category_id, categories(name)")
     .order("name");
@@ -13,7 +14,7 @@ export default async function NewPlanPage() {
   const exercises = (data ?? []) as unknown as ExerciseWithCategory[];
 
   return (
-    <div className="min-h-screen bg-zinc-50">
+    <div>
       <div className="mx-auto max-w-[1400px] px-6 py-8">
         <header className="mb-6">
           <h1 className="text-2xl font-bold text-zinc-900">New Plan</h1>

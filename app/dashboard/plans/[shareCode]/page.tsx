@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import { headers } from "next/headers";
 import Link from "next/link";
-import { supabase } from "@/lib/supabase";
+import { createServerSupabase } from "@/lib/supabase-server";
 import { CopyButton } from "./copy-button";
 
 export const dynamic = "force-dynamic";
@@ -13,7 +13,8 @@ export default async function PlanConfirmationPage({
 }) {
   const { shareCode } = await params;
 
-  const { data: plan } = await supabase
+  const sb = await createServerSupabase();
+  const { data: plan } = await sb
     .from("plans")
     .select("id, name, share_code, clients(name)")
     .eq("share_code", shareCode)
@@ -31,7 +32,7 @@ export default async function PlanConfirmationPage({
     "client";
 
   return (
-    <div className="min-h-screen bg-zinc-50">
+    <div>
       <div className="mx-auto max-w-2xl px-6 py-16">
         <div className="rounded-lg border border-zinc-200 bg-white p-8 shadow-sm">
           <h1 className="text-2xl font-bold text-zinc-900">Plan saved.</h1>

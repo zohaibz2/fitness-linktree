@@ -1,11 +1,7 @@
 import { notFound } from "next/navigation";
+import Link from "next/link";
 import type { Metadata } from "next";
 import { supabase } from "@/lib/supabase";
-
-// TODO(rls): When auth lands and RLS is enabled, replace this nested select with
-// a security-definer RPC like `supabase.rpc("get_plan_by_share_code", { code })`
-// that returns the joined plan as JSON. Otherwise clients/exercises/categories
-// would all need permissive public SELECT policies, leaking more than intended.
 
 type PlanExerciseRow = {
   day_of_week: number;
@@ -14,21 +10,18 @@ type PlanExerciseRow = {
   reps: number;
   weight: number | null;
   notes: string | null;
-  exercises: {
-    name: string;
-    description: string | null;
-    categories: { name: string } | null;
-  } | null;
+  exercise_name: string | null;
+  category_name: string | null;
 };
 
-type PlanRow = {
+type PlanData = {
   id: string;
   name: string;
   start_date: string | null;
   end_date: string | null;
   share_code: string;
-  clients: { name: string | null } | null;
-  plan_exercises: PlanExerciseRow[];
+  client_name: string | null;
+  exercises: PlanExerciseRow[];
 };
 
 const DAYS: { key: number; label: string }[] = [
@@ -41,20 +34,13 @@ const DAYS: { key: number; label: string }[] = [
   { key: 7, label: "Sunday" },
 ];
 
-async function loadPlan(shareCode: string): Promise<PlanRow | null> {
-  const { data } = await supabase
-    .from("plans")
-    .select(
-      `id, name, start_date, end_date, share_code,
-       clients ( name ),
-       plan_exercises (
-         day_of_week, order_in_day, sets, reps, weight, notes,
-         exercises ( name, description, categories ( name ) )
-       )`
-    )
-    .eq("share_code", shareCode)
-    .maybeSingle();
-  return (data as unknown as PlanRow) ?? null;
+async function loadPlan(shareCode: string): Promise<PlanData | null> {
+  // Public read goes through SECURITY DEFINER RPC — the one trust boundary for
+  // unauthenticated access. All other tables are RLS-locked.
+  const { data } = await supabase.rpc("get_plan_by_share_code", {
+    code: shareCode,
+  });
+  return (data as PlanData | null) ?? null;
 }
 
 export async function generateMetadata({
@@ -69,8 +55,7 @@ export async function generateMetadata({
 }
 
 function formatDate(iso: string): string {
-  const d = new Date(iso + "T00:00:00");
-  return d.toLocaleDateString(undefined, {
+  return new Date(iso + "T00:00:00").toLocaleDateString(undefined, {
     month: "short",
     day: "numeric",
     year: "numeric",
@@ -94,21 +79,30 @@ export default async function PublicPlanPage({
   if (!plan) notFound();
 
   const byDay = new Map<number, PlanExerciseRow[]>();
-  for (const pe of plan.plan_exercises ?? []) {
+  for (const pe of plan.exercises ?? []) {
     if (!byDay.has(pe.day_of_week)) byDay.set(pe.day_of_week, []);
     byDay.get(pe.day_of_week)!.push(pe);
   }
-  for (const list of byDay.values()) {
-    list.sort((a, b) => a.order_in_day - b.order_in_day);
-  }
 
-  const clientName = plan.clients?.name ?? "client";
+  const clientName = plan.client_name ?? "client";
   const dateRange = formatRange(plan.start_date, plan.end_date);
-  const totalExercises = plan.plan_exercises?.length ?? 0;
+  const totalExercises = plan.exercises?.length ?? 0;
 
   return (
     <div className="min-h-screen bg-zinc-50">
       <div className="mx-auto max-w-5xl px-6 py-10">
+        <div className="mb-6 flex flex-wrap items-center justify-between gap-3 rounded-lg border border-blue-200 bg-blue-50 p-4">
+          <p className="text-sm text-blue-900">
+            Want to track your progress on this plan?
+          </p>
+          <Link
+            href={`/signup/client?plan=${encodeURIComponent(plan.share_code)}`}
+            className="rounded bg-blue-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-blue-700"
+          >
+            Sign up
+          </Link>
+        </div>
+
         <header className="mb-8 rounded-lg border border-zinc-200 bg-white p-6 shadow-sm">
           <h1 className="text-3xl font-bold text-zinc-900">{plan.name}</h1>
           <p className="mt-1 text-sm text-zinc-600">Plan for {clientName}</p>
@@ -157,18 +151,18 @@ export default async function PublicPlanPage({
 }
 
 function ExerciseCard({ pe }: { pe: PlanExerciseRow }) {
-  if (!pe.exercises) {
+  if (!pe.exercise_name) {
     return (
       <div className="rounded border border-amber-200 bg-amber-50 p-2 text-xs italic text-amber-700">
         Exercise no longer available
       </div>
     );
   }
-  const category = pe.exercises.categories?.name ?? "Uncategorized";
+  const category = pe.category_name ?? "Uncategorized";
   return (
     <div className="rounded border border-zinc-200 bg-white p-2 shadow-sm">
       <div className="text-sm font-semibold text-zinc-900">
-        {pe.exercises.name}
+        {pe.exercise_name}
       </div>
       <div className="mt-0.5 inline-block rounded bg-zinc-100 px-1.5 py-0.5 text-[10px] uppercase tracking-wide text-zinc-600">
         {category}
@@ -180,9 +174,7 @@ function ExerciseCard({ pe }: { pe: PlanExerciseRow }) {
           <span className="ml-1 text-zinc-600">@ {pe.weight}</span>
         )}
       </div>
-      {pe.notes && (
-        <p className="mt-1 text-xs text-zinc-600">{pe.notes}</p>
-      )}
+      {pe.notes && <p className="mt-1 text-xs text-zinc-600">{pe.notes}</p>}
     </div>
   );
 }
