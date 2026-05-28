@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import type { Metadata } from "next";
 import { supabase } from "@/lib/supabase";
+import { createServerSupabase } from "@/lib/supabase-server";
 
 type PlanExerciseRow = {
   day_of_week: number;
@@ -88,20 +89,26 @@ export default async function PublicPlanPage({
   const dateRange = formatRange(plan.start_date, plan.end_date);
   const totalExercises = plan.exercises?.length ?? 0;
 
+  const sb = await createServerSupabase();
+  const { data: { user } } = await sb.auth.getUser();
+  const showSignupBanner = !user;
+
   return (
     <div className="min-h-screen bg-zinc-50">
       <div className="mx-auto max-w-5xl px-6 py-10">
-        <div className="mb-6 flex flex-wrap items-center justify-between gap-3 rounded-lg border border-blue-200 bg-blue-50 p-4">
-          <p className="text-sm text-blue-900">
-            Want to track your progress on this plan?
-          </p>
-          <Link
-            href={`/signup/client?plan=${encodeURIComponent(plan.share_code)}`}
-            className="rounded bg-blue-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-blue-700"
-          >
-            Sign up
-          </Link>
-        </div>
+        {showSignupBanner && (
+          <div className="mb-6 flex flex-wrap items-center justify-between gap-3 rounded-lg border border-blue-200 bg-blue-50 p-4">
+            <p className="text-sm text-blue-900">
+              Want to track your progress on this plan?
+            </p>
+            <Link
+              href={`/signup/client?plan=${encodeURIComponent(plan.share_code)}`}
+              className="rounded bg-blue-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-blue-700"
+            >
+              Sign up
+            </Link>
+          </div>
+        )}
 
         <header className="mb-8 rounded-lg border border-zinc-200 bg-white p-6 shadow-sm">
           <h1 className="text-3xl font-bold text-zinc-900">{plan.name}</h1>
