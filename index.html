@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Sign Up — Gym</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <!-- Tailwind CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      html,body { height: 100%; }
+      body { font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial; }
+    </style>
+  </head>
+  <body class="min-h-screen bg-white">
+    <div class="min-h-screen grid grid-cols-1 md:grid-cols-2">
+      <!-- Left: Gym image -->
+      <div class="hidden md:block bg-cover bg-center" style="background-image: url('https://images.unsplash.com/photo-1546484959-fd6f7f5a2a6e?auto=format&fit=crop&w=1600&q=80');">
+        <!-- purely decorative -->
+      </div>
+
+      <!-- Right: Orange background with signup card -->
+      <div class="flex items-center justify-center p-8 bg-[#FF6F3C]">
+        <div class="w-full max-w-3xl">
+          <div class="bg-white rounded-2xl p-10 md:p-12 shadow-lg">
+            <div class="max-w-xl mx-auto">
+              <h1 class="text-2xl md:text-3xl font-extrabold text-gray-900">Sign Up To Your Account</h1>
+              <p class="mt-3 text-sm text-gray-500">Custom training plans with one shared link. Track every rep, every set, live.</p>
+
+              <form class="mt-8 space-y-4">
+                <div>
+                  <label class="block text-xs text-gray-600 mb-2">Email</label>
+                  <input type="email" placeholder="you@domain.com" class="w-full bg-gray-100 rounded-full px-4 py-3 text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-300" />
+                </div>
+
+                <div>
+                  <label class="block text-xs text-gray-600 mb-2">Password</label>
+                  <input type="password" placeholder="Enter password" class="w-full bg-gray-100 rounded-full px-4 py-3 text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-300" />
+                </div>
+
+                <div>
+                  <label class="block text-xs text-gray-600 mb-2">Confirm Password</label>
+                  <input type="password" placeholder="Confirm password" class="w-full bg-gray-100 rounded-full px-4 py-3 text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-300" />
+                </div>
+
+                <div>
+                  <button type="submit" class="w-full bg-[#FF6F3C] text-white rounded-full py-3 font-medium hover:brightness-95">Sign Up</button>
+                </div>
+              </form>
+
+              <!-- Or separator -->
+              <div class="mt-6 flex items-center">
+                <div class="flex-1 h-px bg-gray-200"></div>
+                <div class="px-4 text-sm text-gray-500">Or</div>
+                <div class="flex-1 h-px bg-gray-200"></div>
+              </div>
+
+              <!-- Social buttons -->
+              <div class="mt-6 space-y-3">
+                <button class="w-full bg-white border border-gray-200 rounded-full py-2.5 px-4 flex items-center justify-center gap-3 text-sm hover:shadow-sm">
+                  <!-- Google SVG -->
+                  <svg width="18" height="18" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M44.5 20H24v8.5h11.9C34.5 33.3 30.1 36 24 36c-7.7 0-14-6.3-14-14s6.3-14 14-14c3.6 0 6.8 1.3 9.3 3.5l6.5-6.5C35.6 3.2 30.1 1 24 1 11.3 1 1 11.3 1 24s10.3 23 23 23 23-10.3 23-23c0-1.5-.2-3-.5-4.5z" fill="#FFC107"/><path d="M6.3 14.9l7 5.1C15.8 18 19.6 16 24 16c3.6 0 6.8 1.3 9.3 3.5l6.5-6.5C35.6 7.2 30.1 5 24 5 16.2 5 9.3 9.6 6.3 14.9z" fill="#FF3D00"/><path d="M24 43c6.1 0 11.6-2.2 15.8-5.8l-7.5-6.1C30.8 33.8 28 35 24 35c-6.1 0-11.3-4.1-13.1-9.6l-7.6 5.9C6.8 37.8 14.9 43 24 43z" fill="#4CAF50"/><path d="M44.5 20H24v8.5h11.9C35 30 30.8 35 24 35c-6.1 0-11.3-4.1-13.1-9.6l-7.6 5.9C6.8 37.8 14.9 43 24 43c12.7 0 23-10.3 23-23 0-1.5-.2-3-.5-4.5z" fill="#1976D2"/></svg>
+                  <span>Sign In with Google</span>
+                </button>
+
+                <button class="w-full bg-white border border-gray-200 rounded-full py-2.5 px-4 flex items-center justify-center gap-3 text-sm hover:shadow-sm">
+                  <!-- Apple SVG -->
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M16.365 1.43c0 1.02-.36 2.02-1.02 2.86-.66.84-1.71 1.62-2.76 1.46.18-.83.66-1.69 1.45-2.38.78-.69 1.73-1.15 2.33-1.94.16-.21.28-.44.2-.55-.09-.12-.36-.03-.7.08-.35.11-.78.31-1.21.61-.91.6-1.78 1.67-2.02 2.72-.1.37-.14.83-.04 1.27-.94.09-2.05.49-2.84 1.23-1.45 1.26-1.9 3.66-.6 5.48.84 1.08 2.33 1.59 3.86 1.59.08 0 .16 0 .24-.01 1.01-.06 1.97-.4 2.81-.94.01.52.06 1.06.19 1.58.17.72.5 1.36.94 1.9.16.2.45.23.67.07.3-.21.6-.43.85-.69 1.05-1.07 1.72-2.46 1.87-3.93.1-1.09-.01-2.1-.26-2.98-.54-1.86-2.07-3.14-3.98-3.14" fill="#111"/></svg>
+                  <span>Sign In with Apple</span>
+                </button>
+              </div>
+
+              <p class="mt-6 text-center text-sm text-gray-600">Already have an account? <a href="#" class="text-[#FF6F3C] font-medium">Login Here</a></p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
