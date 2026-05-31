@@ -13,7 +13,7 @@ export default function Home() {
         </p>
         <div className="pt-4">
           <Link 
-            href="/signup" 
+            href="/signup/trainer" 
             className="inline-block bg-white text-[#111827] font-bold px-8 py-4 rounded-full shadow-lg hover:bg-gray-100 transition-all transform hover:scale-105"
           >
             Get started
