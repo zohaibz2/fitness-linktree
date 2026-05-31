@@ -4,45 +4,39 @@ export default function Home() {
   return (
     <main className="relative min-h-screen bg-[#FF6B35] flex flex-col items-center justify-center text-white px-4 overflow-hidden">
       
-      {/* 1. High-Distortion Topographic Background Lines with Intersecting Center Waves */}
+      {/* 1. Corrected Background Layout: Exactly 8 Waves Framing an Empty Center */}
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none select-none overflow-hidden">
         <svg 
           viewBox="0 0 1000 1000" 
-          className="absolute w-[160%] h-[160%] min-w-[1200px] min-h-[1200px] text-white/15 stroke-current fill-none stroke-[1.25]"
+          className="absolute w-[150%] h-[150%] min-w-[1200px] min-h-[1200px] text-white/20 stroke-current fill-none stroke-[1.5]"
         >
-          {/* Wave 1 - Smallest Center (Crosses over Wave 2 and 3) */}
-          <path d="M500,410 C590,370 600,480 540,540 C480,600 400,520 410,450 C420,380 410,450 500,410 Z" />
+          {/* WAVE 1: Innermost boundary - framing the outside of the text block with slight bottom overlapping */}
+          <path d="M500,280 C680,280 710,340 700,500 C690,640 600,680 480,700 C340,720 280,630 300,490 C320,340 360,280 500,280 Z" />
           
-          {/* Wave 2 - Distorted Center (Intersects deeply with Wave 1 and 3) */}
-          <path d="M470,440 C580,330 650,420 590,510 C530,600 420,630 380,520 C340,410 360,550 470,440 Z" />
+          {/* WAVE 2: Mingles slightly at the bottom with Wave 1 */}
+          <path d="M510,250 C710,240 740,310 730,510 C720,680 580,670 460,715 C320,770 250,600 270,460 C290,310 340,260 510,250 Z" />
           
-          {/* Wave 3 - Intermediate Center (Weaves completely through Waves 2 and 4) */}
-          <path d="M530,360 C630,310 720,440 640,570 C560,700 440,580 390,660 C340,740 430,410 530,360 Z" />
+          {/* WAVE 3: Mingles slightly at the bottom left with Wave 2 */}
+          <path d="M490,210 C740,190 780,270 770,510 C760,720 630,730 490,750 C330,770 210,650 230,420 C250,230 290,220 490,210 Z" />
           
-          {/* Wave 4 - Outer Center Bound (Crosses into Wave 3's territory) */}
-          <path d="M460,340 C720,240 740,390 710,610 C680,830 460,710 360,740 C260,770 200,440 460,340 Z" />
+          {/* WAVE 4: Final inner group boundary layer */}
+          <path d="M500,170 C780,140 820,230 810,510 C800,760 670,800 500,810 C310,820 170,690 190,380 C210,160 260,190 500,170 Z" />
           
-          {/* Wave 5 - Middle Wall */}
-          <path d="M500,220 C760,110 840,320 780,640 C720,960 540,840 360,770 C180,700 220,330 500,220 Z" />
+          {/* WAVE 5: Independent outer ripple */}
+          <path d="M500,110 C830,70 880,180 870,520 C860,820 720,870 500,880 C260,890 110,750 140,330 C160,90 220,130 500,110 Z" />
           
-          {/* Wave 6 */}
-          <path d="M500,160 C810,40 910,270 840,680 C770,1090 560,920 340,840 C120,760 160,290 500,160 Z" />
+          {/* WAVE 6: Independent outer ripple */}
+          <path d="M500,50 C880,0 940,120 930,520 C920,880 770,930 500,940 C210,950 50,810 80,280 C100,20 170,80 500,50 Z" />
           
-          {/* Wave 7 */}
-          <path d="M500,100 C870,-30 970,220 890,720 C810,1220 590,1000 320,910 C50,820 100,250 500,100 Z" />
+          {/* WAVE 7: Independent outer ripple */}
+          <path d="M500,-10 C930,-60 1000,60 990,520 C980,940 820,990 500,1000 C160,1010 -10,870 20,230 C40,-50 120,30 500,-10 Z" />
           
-          {/* Wave 8 */}
-          <path d="M500,40 C930,-100 1040,170 950,760 C860,1350 610,1080 290,980 C-30,880 40,210 500,40 Z" />
-          
-          {/* Wave 9 */}
-          <path d="M500,-20 C990,-170 1110,120 1010,800 C910,1480 640,1160 260,1050 C-120,940 -20,170 500,-20 Z" />
-          
-          {/* Wave 10 - Outermost */}
-          <path d="M500,-80 C1050,-240 1170,70 1070,840 C970,1610 660,1240 230,1120 C-200,1000 -80,130 500,-80 Z" />
+          {/* WAVE 8: Outermost ring */}
+          <path d="M500,-70 C990,-130 1060,0 1050,520 C1040,1000 870,1050 500,1060 C110,1070 -70,930 -40,180 C-20,-120 70,-20 500,-70 Z" />
         </svg>
       </div>
 
-      {/* 2. Main Content Layer */}
+      {/* 2. Main Content Layer (Perfectly clean background directly behind it) */}
       <div className="relative z-10 max-w-md text-center space-y-6">
         <h1 className="text-6xl font-extrabold tracking-tight text-white font-sans">
           FitTree.
