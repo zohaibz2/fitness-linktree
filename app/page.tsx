@@ -4,26 +4,41 @@ export default function Home() {
   return (
     <main className="relative min-h-screen bg-[#FF6B35] flex flex-col items-center justify-center text-white px-4 overflow-hidden">
       
-      {/* 1. Wavy Topographic Background Lines (Pure SVG Code) */}
+      {/* 1. Dense Wavy Topographic Background Lines (Pure SVG Code) */}
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none select-none overflow-hidden">
         <svg 
           viewBox="0 0 1000 1000" 
-          className="absolute w-[140%] h-[140%] min-w-[1000px] min-h-[1000px] text-white/20 stroke-current fill-none stroke-[1.5]"
+          className="absolute w-[150%] h-[150%] min-w-[1100px] min-h-[1100px] text-white/15 stroke-current fill-none stroke-[1.25]"
         >
-          {/* Innermost wavy ring */}
-          <path d="M500,380 C570,370 610,410 620,490 C630,570 560,610 490,620 C410,630 370,560 380,480 C390,410 440,390 500,380 Z" />
+          {/* Wave 1 - Innermost */}
+          <path d="M500,420 C540,415 565,435 570,480 C575,530 540,550 500,555 C450,560 425,520 430,475 C435,430 460,425 500,420 Z" />
           
-          {/* Middle-inner wavy ring */}
-          <path d="M500,280 C630,260 700,340 720,490 C740,630 620,710 480,720 C340,730 270,610 290,470 C310,340 380,300 500,280 Z" />
+          {/* Wave 2 */}
+          <path d="M500,370 C565,355 610,390 615,485 C620,570 560,600 495,610 C420,620 375,565 385,480 C395,405 435,385 500,370 Z" />
           
-          {/* Middle wavy ring */}
-          <path d="M500,180 C690,150 800,260 820,490 C840,710 690,820 480,830 C260,840 160,680 190,460 C220,250 320,200 500,180 Z" />
+          {/* Wave 3 */}
+          <path d="M500,320 C595,300 660,350 670,490 C680,615 590,655 490,670 C390,685 320,595, 335,480 C350,375 400,340 500,320 Z" />
           
-          {/* Outer-middle wavy ring */}
-          <path d="M500,80 C760,40 910,180 930,490 C950,790 770,930 470,940 C170,950 50,750 90,450 C120,160 250,110 500,80 Z" />
+          {/* Wave 4 */}
+          <path d="M500,270 C630,250 710,310 725,490 C740,655 615,715 480,730 C345,745 265,620 285,475 C305,340 370,290 500,270 Z" />
           
-          {/* Outermost wavy ring */}
-          <path d="M500,-20 C830,-70 1020,100 1040,490 C1060,870 840,1040 460,1050 C90,1060 -60,820 -10,440 C30,70 180,-20 500,-20 Z" />
+          {/* Wave 5 - Middle */}
+          <path d="M500,210 C665,185 765,265 780,495 C795,705 650,775 475,790 C300,805 210,655 235,470 C260,300 335,235 500,210 Z" />
+          
+          {/* Wave 6 */}
+          <path d="M500,150 C710,120 820,215 840,495 C860,760 690,845 470,860 C250,875 150,700 180,465 C210,250 290,180 500,150 Z" />
+          
+          {/* Wave 7 */}
+          <path d="M500,90 C755,55 880,165 900,495 C920,810 730,910 460,930 C190,950 90,740 125,455 C160,195 245,125 500,90 Z" />
+          
+          {/* Wave 8 */}
+          <path d="M500,30 C805,-10 940,110 965,495 C990,870 770,980 450,1000 C130,1020 30,785 70,445 C110,130 200,70 500,30 Z" />
+          
+          {/* Wave 9 */}
+          <path d="M500,-30 C855,-75 1000,55 1025,495 C1050,925 810,1050 440,1070 C70,1090 -30,830 15,435 C60,65 155,15 500,-30 Z" />
+          
+          {/* Wave 10 - Outermost */}
+          <path d="M500,-90 C910,-140 1060,-10 1085,495 C1110,985 850,1120 430,1140 C10,1160 -90,875 -40,425 C10,0 110,-40 500,-90 Z" />
         </svg>
       </div>
 
