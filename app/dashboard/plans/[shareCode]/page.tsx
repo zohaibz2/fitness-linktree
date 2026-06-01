@@ -1,5 +1,4 @@
 import { notFound } from "next/navigation";
-import { headers } from "next/headers";
 import Link from "next/link";
 import { createServerSupabase } from "@/lib/supabase-server";
 import { CopyButton } from "./copy-button";
@@ -22,10 +21,7 @@ export default async function PlanConfirmationPage({
 
   if (!plan) notFound();
 
-  const h = await headers();
-  const host = h.get("host") ?? "yoursite.com";
-  const proto = h.get("x-forwarded-proto") ?? "https";
-  const shareUrl = `${proto}://${host}/plan/${plan.share_code}`;
+  const shareUrl = `https://fitness-linktree.vercel.app/plan/${plan.share_code}`;
 
   const clientName =
     (plan as unknown as { clients: { name: string | null } | null }).clients?.name ??
