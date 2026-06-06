@@ -32,6 +32,11 @@ export async function submitCheckIn(
     return { ok: false, error: "Missing check-in context." };
   }
 
+  const clientName = String(formData.get("client_name") ?? "").trim();
+  if (!clientName) {
+    return { ok: false, error: "Your name is required." };
+  }
+
   const actualSets = toIntOrNull(formData.get("actual_sets"));
   const actualReps = toIntOrNull(formData.get("actual_reps"));
   const actualWeight = toNumOrNull(formData.get("actual_weight"));
@@ -67,6 +72,7 @@ export async function submitCheckIn(
   const { error: rpcErr } = await sb.rpc("submit_check_in", {
     p_share_code: shareCode,
     p_plan_exercise_id: planExerciseId,
+    p_client_name: clientName,
     p_actual_sets: actualSets,
     p_actual_reps: actualReps,
     p_actual_weight: actualWeight,

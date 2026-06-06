@@ -66,17 +66,17 @@ export default async function PublicPlanPage({
   const clientName = plan.client_name ?? "Client";
 
   return (
-    <div className="min-h-screen bg-zinc-950 text-zinc-100">
+    <div className="min-h-screen bg-zinc-50 text-zinc-900">
       <div className="mx-auto max-w-xl px-5 py-8">
         <header className="mb-6">
-          <p className="text-xs font-medium uppercase tracking-widest text-emerald-400">
+          <p className="text-xs font-medium uppercase tracking-widest text-emerald-600">
             {clientName}
           </p>
-          <h1 className="mt-1 text-3xl font-bold tracking-tight text-white">
+          <h1 className="mt-1 text-3xl font-bold tracking-tight text-zinc-900">
             {plan.name}
           </h1>
           {(plan.start_date || plan.end_date) && (
-            <p className="mt-2 text-sm text-zinc-400">
+            <p className="mt-2 text-sm text-zinc-500">
               {plan.start_date && formatDate(plan.start_date)}
               {plan.start_date && plan.end_date && " — "}
               {plan.end_date && formatDate(plan.end_date)}
@@ -101,7 +101,7 @@ export default async function PublicPlanPage({
                 endDate={plan.end_date}
               >
                 {items.length === 0 ? (
-                  <p className="text-sm italic text-zinc-600">Rest day</p>
+                  <p className="text-sm italic text-zinc-400">Rest day</p>
                 ) : (
                   <div className="flex flex-col gap-3">
                     {items.map((pe, idx) => (
@@ -131,16 +131,16 @@ function ExerciseCard({
 }) {
   if (!pe.exercise_name) {
     return (
-      <div className="rounded-xl border border-amber-500/30 bg-amber-500/10 p-3 text-xs italic text-amber-300">
+      <div className="rounded-xl border border-amber-200 bg-amber-50 p-3 text-xs italic text-amber-700">
         Exercise no longer available
       </div>
     );
   }
 
   return (
-    <div className="rounded-xl border border-zinc-800 bg-zinc-900 p-4">
+    <div className="rounded-xl border border-zinc-200 bg-white p-4 shadow-sm">
       <div className="flex items-start justify-between gap-3">
-        <h3 className="text-base font-semibold text-white">
+        <h3 className="text-base font-semibold text-zinc-900">
           {pe.exercise_name}
         </h3>
         {pe.video_url && (
@@ -149,7 +149,7 @@ function ExerciseCard({
             target="_blank"
             rel="noopener noreferrer"
             aria-label={`Watch ${pe.exercise_name} demo`}
-            className="shrink-0 rounded-full bg-emerald-500/15 p-2 text-emerald-400 transition-colors hover:bg-emerald-500/25"
+            className="shrink-0 rounded-full bg-emerald-50 p-2 text-emerald-600 transition-colors hover:bg-emerald-100"
           >
             <PlayIcon />
           </a>
@@ -157,22 +157,22 @@ function ExerciseCard({
       </div>
 
       {pe.category_name && (
-        <span className="mt-2 inline-block rounded-full bg-zinc-800 px-2.5 py-0.5 text-[11px] font-medium uppercase tracking-wide text-zinc-400">
+        <span className="mt-2 inline-block rounded-full bg-zinc-100 px-2.5 py-0.5 text-[11px] font-medium uppercase tracking-wide text-zinc-600">
           {pe.category_name}
         </span>
       )}
 
       <div className="mt-3 flex items-baseline gap-3 text-sm">
-        <span className="font-semibold text-zinc-100">
-          {pe.sets} <span className="text-zinc-500">×</span> {pe.reps}
+        <span className="font-semibold text-zinc-900">
+          {pe.sets} <span className="text-zinc-400">×</span> {pe.reps}
         </span>
         {pe.weight != null && (
-          <span className="text-emerald-400">{pe.weight} kg</span>
+          <span className="text-emerald-600">{pe.weight} kg</span>
         )}
       </div>
 
       {pe.notes && (
-        <p className="mt-2 text-sm leading-relaxed text-zinc-400">{pe.notes}</p>
+        <p className="mt-2 text-sm leading-relaxed text-zinc-500">{pe.notes}</p>
       )}
 
       {pe.id && (
