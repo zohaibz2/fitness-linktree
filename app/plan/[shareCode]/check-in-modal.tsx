@@ -14,6 +14,7 @@ export function CheckInButton({
 }) {
   const [open, setOpen] = useState(false);
   const [done, setDone] = useState(false);
+  const [clientName, setClientName] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
 
@@ -21,25 +22,27 @@ export function CheckInButton({
     setOpen(false);
     setError(null);
     setDone(false);
+    setClientName("");
   }
 
   function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setError(null);
 
-    const formData = new FormData(e.currentTarget);
-
     // Client-side identity check: name must not be empty before submitting.
-    const clientName = String(formData.get("client_name") ?? "").trim();
-    if (!clientName) {
+    if (!clientName.trim()) {
       setError("Please confirm your name before submitting.");
       return;
     }
 
+    const formData = new FormData(e.currentTarget);
     formData.set("share_code", shareCode);
     formData.set("plan_exercise_id", planExerciseId);
+    formData.set("client_name", clientName.trim());
     startTransition(async () => {
       const res = await submitCheckIn(formData);
+      // On success we show the confirmation; on failure we keep the modal open
+      // (and the entered name intact) so the user can correct and retry.
       if (res.ok) setDone(true);
       else setError(res.error ?? "Something went wrong.");
     });
@@ -104,6 +107,8 @@ export function CheckInButton({
                     required
                     autoComplete="name"
                     placeholder="e.g. Alex Smith"
+                    value={clientName}
+                    onChange={(e) => setClientName(e.target.value)}
                     className="mt-1 rounded-lg border border-zinc-300 bg-white px-2 py-1.5 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-emerald-500 focus:outline-none"
                   />
                 </label>
@@ -163,7 +168,7 @@ export function CheckInButton({
                 </label>
 
                 {error && (
-                  <p className="rounded-lg border border-red-200 bg-red-50 p-2 text-sm text-red-700">
+                  <p className="rounded bg-red-50 p-2 text-sm text-red-600">
                     {error}
                   </p>
                 )}

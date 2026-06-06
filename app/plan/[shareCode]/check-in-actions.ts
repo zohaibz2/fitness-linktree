@@ -46,50 +46,64 @@ export async function submitCheckIn(
   // INSERT policy + the RPC's anon grant) is the right role here.
   const sb = supabase;
 
-  // ---- Step 1: upload the photo FIRST (if provided) ----
   let mediaPath: string | null = null;
-  const file = formData.get("photo");
-  if (file instanceof File && file.size > 0) {
-    if (!ALLOWED.includes(file.type)) {
-      return { ok: false, error: "Photo must be a JPEG, PNG, WEBP, or HEIC image." };
+  try {
+    // ---- Step 1: upload the photo FIRST (if provided) ----
+    const file = formData.get("photo");
+    if (file instanceof File && file.size > 0) {
+      if (!ALLOWED.includes(file.type)) {
+        return { ok: false, error: "Photo must be a JPEG, PNG, WEBP, or HEIC image." };
+      }
+      if (file.size > MAX_BYTES) {
+        return { ok: false, error: "Photo must be 8 MB or smaller." };
+      }
+      const ext = file.name.includes(".") ? file.name.split(".").pop() : "jpg";
+      const key = `${shareCode}/${planExerciseId}/${randomUUID()}.${ext}`;
+      const { error: upErr } = await sb.storage
+        .from(BUCKET)
+        .upload(key, file, { contentType: file.type, upsert: false });
+      if (upErr) {
+        // Upload failed → abort with no DB write (nothing to clean up).
+        return { ok: false, error: `Photo upload failed: ${upErr.message}` };
+      }
+      mediaPath = key;
     }
-    if (file.size > MAX_BYTES) {
-      return { ok: false, error: "Photo must be 8 MB or smaller." };
-    }
-    const ext = file.name.includes(".") ? file.name.split(".").pop() : "jpg";
-    const key = `${shareCode}/${planExerciseId}/${randomUUID()}.${ext}`;
-    const { error: upErr } = await sb.storage
-      .from(BUCKET)
-      .upload(key, file, { contentType: file.type, upsert: false });
-    if (upErr) {
-      // Upload failed → abort with no DB write (nothing to clean up).
-      return { ok: false, error: `Photo upload failed: ${upErr.message}` };
-    }
-    mediaPath = key;
-  }
 
-  // ---- Step 2: insert the log via the validated SECURITY DEFINER RPC ----
-  const { error: rpcErr } = await sb.rpc("submit_check_in", {
-    p_share_code: shareCode,
-    p_plan_exercise_id: planExerciseId,
-    p_client_name: clientName,
-    p_actual_sets: actualSets,
-    p_actual_reps: actualReps,
-    p_actual_weight: actualWeight,
-    p_notes: notes,
-    p_media_url: mediaPath,
-  });
+    // ---- Step 2: insert the log via the validated SECURITY DEFINER RPC ----
+    const { error: rpcErr } = await sb.rpc("submit_check_in", {
+      p_share_code: shareCode,
+      p_plan_exercise_id: planExerciseId,
+      p_client_name: clientName,
+      p_actual_sets: actualSets,
+      p_actual_reps: actualReps,
+      p_actual_weight: actualWeight,
+      p_notes: notes,
+      p_media_url: mediaPath,
+    });
 
-  if (rpcErr) {
-    // ---- Compensating cleanup: remove the orphaned upload ----
+    if (rpcErr) {
+      // ---- Compensating cleanup: remove the orphaned upload ----
+      if (mediaPath) {
+        await sb.storage.from(BUCKET).remove([mediaPath]);
+      }
+      if (rpcErr.message.includes("invalid_check_in_target")) {
+        return { ok: false, error: "This check-in link is no longer valid." };
+      }
+      return { ok: false, error: `Could not save check-in: ${rpcErr.message}` };
+    }
+
+    return { ok: true };
+  } catch (err) {
+    // Anything thrown (network, storage, unexpected RPC failure): clean up any
+    // orphaned upload and surface a structured error instead of failing silently.
     if (mediaPath) {
-      await sb.storage.from(BUCKET).remove([mediaPath]);
+      try {
+        await sb.storage.from(BUCKET).remove([mediaPath]);
+      } catch {
+        // best-effort cleanup; ignore secondary failure
+      }
     }
-    if (rpcErr.message.includes("invalid_check_in_target")) {
-      return { ok: false, error: "This check-in link is no longer valid." };
-    }
-    return { ok: false, error: `Could not save check-in: ${rpcErr.message}` };
+    const message = err instanceof Error ? err.message : "Unexpected error.";
+    return { ok: false, error: `Could not save check-in: ${message}` };
   }
-
-  return { ok: true };
 }
