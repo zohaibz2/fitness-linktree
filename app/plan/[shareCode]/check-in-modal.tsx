@@ -1,7 +1,9 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import Link from "next/link";
 import { submitCheckIn } from "./check-in-actions";
+import { createBrowserSupabase } from "@/lib/supabase-browser";
 
 export function CheckInButton({
   shareCode,
@@ -14,7 +16,7 @@ export function CheckInButton({
 }) {
   const [open, setOpen] = useState(false);
   const [done, setDone] = useState(false);
-  const [clientName, setClientName] = useState("");
+  const [needsLogin, setNeedsLogin] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
 
@@ -22,27 +24,34 @@ export function CheckInButton({
     setOpen(false);
     setError(null);
     setDone(false);
-    setClientName("");
+  }
+
+  // Identity comes from auth.uid() server-side, so a session is required.
+  // Gate the modal: only open it for authenticated users.
+  async function handleOpen() {
+    setNeedsLogin(false);
+    const supabase = createBrowserSupabase();
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+    if (!session?.user) {
+      setNeedsLogin(true);
+      return;
+    }
+    setOpen(true);
   }
 
   function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setError(null);
 
-    // Client-side identity check: name must not be empty before submitting.
-    if (!clientName.trim()) {
-      setError("Please confirm your name before submitting.");
-      return;
-    }
-
     const formData = new FormData(e.currentTarget);
     formData.set("share_code", shareCode);
     formData.set("plan_exercise_id", planExerciseId);
-    formData.set("client_name", clientName.trim());
     startTransition(async () => {
       const res = await submitCheckIn(formData);
       // On success we show the confirmation; on failure we keep the modal open
-      // (and the entered name intact) so the user can correct and retry.
+      // so the user can retry.
       if (res.ok) setDone(true);
       else setError(res.error ?? "Something went wrong.");
     });
@@ -52,11 +61,23 @@ export function CheckInButton({
     <>
       <button
         type="button"
-        onClick={() => setOpen(true)}
+        onClick={handleOpen}
         className="mt-3 inline-flex items-center gap-1.5 rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-1.5 text-xs font-semibold text-emerald-700 transition-colors hover:bg-emerald-100"
       >
         Log Check-in
       </button>
+
+      {needsLogin && (
+        <div className="mt-2 flex items-center justify-between gap-3 rounded bg-amber-50 p-2 text-sm text-amber-800">
+          <span>Please log in to your account to record your workout.</span>
+          <Link
+            href="/login/client"
+            className="shrink-0 font-semibold text-amber-900 underline hover:no-underline"
+          >
+            Log in
+          </Link>
+        </div>
+      )}
 
       {open && (
         <div
@@ -99,20 +120,6 @@ export function CheckInButton({
               </div>
             ) : (
               <form onSubmit={onSubmit} className="space-y-4">
-                <label className="flex flex-col text-xs font-medium text-zinc-600">
-                  Confirm your name *
-                  <input
-                    name="client_name"
-                    type="text"
-                    required
-                    autoComplete="name"
-                    placeholder="e.g. Alex Smith"
-                    value={clientName}
-                    onChange={(e) => setClientName(e.target.value)}
-                    className="mt-1 rounded-lg border border-zinc-300 bg-white px-2 py-1.5 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-emerald-500 focus:outline-none"
-                  />
-                </label>
-
                 <div className="grid grid-cols-3 gap-3">
                   <label className="flex flex-col text-xs font-medium text-zinc-600">
                     Sets

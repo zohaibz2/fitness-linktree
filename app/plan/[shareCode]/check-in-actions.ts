@@ -1,7 +1,7 @@
 "use server";
 
 import { randomUUID } from "node:crypto";
-import { supabase } from "@/lib/supabase";
+import { createServerSupabase } from "@/lib/supabase-server";
 
 const BUCKET = "client-uploads";
 const MAX_BYTES = 8 * 1024 * 1024; // 8 MB
@@ -32,19 +32,15 @@ export async function submitCheckIn(
     return { ok: false, error: "Missing check-in context." };
   }
 
-  const clientName = String(formData.get("client_name") ?? "").trim();
-  if (!clientName) {
-    return { ok: false, error: "Your name is required." };
-  }
-
   const actualSets = toIntOrNull(formData.get("actual_sets"));
   const actualReps = toIntOrNull(formData.get("actual_reps"));
   const actualWeight = toNumOrNull(formData.get("actual_weight"));
   const notes = String(formData.get("notes") ?? "").trim();
 
-  // Anonymous share-code visitor: the anon client (with the bucket's anon
-  // INSERT policy + the RPC's anon grant) is the right role here.
-  const sb = supabase;
+  // The RPC identifies the client via auth.uid(), so we must use the
+  // session-aware server client (reads the auth cookie). The anon client would
+  // have a null auth.uid() and the RPC would reject the call.
+  const sb = await createServerSupabase();
 
   let mediaPath: string | null = null;
   try {
@@ -73,7 +69,6 @@ export async function submitCheckIn(
     const { error: rpcErr } = await sb.rpc("submit_check_in", {
       p_share_code: shareCode,
       p_plan_exercise_id: planExerciseId,
-      p_client_name: clientName,
       p_actual_sets: actualSets,
       p_actual_reps: actualReps,
       p_actual_weight: actualWeight,
