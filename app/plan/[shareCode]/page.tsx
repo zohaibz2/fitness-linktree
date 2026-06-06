@@ -1,29 +1,9 @@
 import { notFound } from "next/navigation";
-import Link from "next/link";
 import type { Metadata } from "next";
 import { supabase } from "@/lib/supabase";
-import { createServerSupabase } from "@/lib/supabase-server";
-
-type PlanExerciseRow = {
-  day_of_week: number;
-  order_in_day: number;
-  sets: number;
-  reps: number;
-  weight: number | null;
-  notes: string | null;
-  exercise_name: string | null;
-  category_name: string | null;
-};
-
-type PlanData = {
-  id: string;
-  name: string;
-  start_date: string | null;
-  end_date: string | null;
-  share_code: string;
-  client_name: string | null;
-  exercises: PlanExerciseRow[];
-};
+import type { PlanShareView, PlanShareExercise } from "@/lib/database.types";
+import { PlanDateBanner, DaySection } from "./plan-today";
+import { CheckInButton } from "./check-in-modal";
 
 const DAYS: { key: number; label: string }[] = [
   { key: 1, label: "Monday" },
@@ -35,13 +15,15 @@ const DAYS: { key: number; label: string }[] = [
   { key: 7, label: "Sunday" },
 ];
 
-async function loadPlan(shareCode: string): Promise<PlanData | null> {
-  // Public read goes through SECURITY DEFINER RPC — the one trust boundary for
-  // unauthenticated access. All other tables are RLS-locked.
+// Anon visitors can't read the tables directly (RLS); the SECURITY DEFINER
+// RPC is the only sanctioned public read path. It returns the plan + nested
+// exercises already sorted by day_of_week, order_in_day — or null if the
+// share_code matches nothing.
+async function loadPlan(shareCode: string): Promise<PlanShareView | null> {
   const { data } = await supabase.rpc("get_plan_by_share_code", {
     code: shareCode,
   });
-  return (data as PlanData | null) ?? null;
+  return (data as PlanShareView | null) ?? null;
 }
 
 export async function generateMetadata({
@@ -52,7 +34,7 @@ export async function generateMetadata({
   const { shareCode } = await params;
   const plan = await loadPlan(shareCode);
   if (!plan) return { title: "Plan not found" };
-  return { title: `${plan.name} – Fitness Plan` };
+  return { title: `${plan.name} — Workout Plan` };
 }
 
 function formatDate(iso: string): string {
@@ -61,13 +43,6 @@ function formatDate(iso: string): string {
     day: "numeric",
     year: "numeric",
   });
-}
-
-function formatRange(start: string | null, end: string | null): string | null {
-  if (start && end) return `${formatDate(start)} – ${formatDate(end)}`;
-  if (start) return `From ${formatDate(start)}`;
-  if (end) return `Until ${formatDate(end)}`;
-  return null;
 }
 
 export default async function PublicPlanPage({
@@ -79,109 +54,148 @@ export default async function PublicPlanPage({
   const plan = await loadPlan(shareCode);
   if (!plan) notFound();
 
-  const byDay = new Map<number, PlanExerciseRow[]>();
+  // Group the pre-sorted exercises by day; insertion order preserves the
+  // RPC's order_in_day sort within each day.
+  const byDay = new Map<number, PlanShareExercise[]>();
   for (const pe of plan.exercises ?? []) {
-    if (!byDay.has(pe.day_of_week)) byDay.set(pe.day_of_week, []);
-    byDay.get(pe.day_of_week)!.push(pe);
+    const list = byDay.get(pe.day_of_week);
+    if (list) list.push(pe);
+    else byDay.set(pe.day_of_week, [pe]);
   }
 
-  const clientName = plan.client_name ?? "client";
-  const dateRange = formatRange(plan.start_date, plan.end_date);
-  const totalExercises = plan.exercises?.length ?? 0;
-
-  const sb = await createServerSupabase();
-  const { data: { user } } = await sb.auth.getUser();
-  const showSignupBanner = !user;
+  const clientName = plan.client_name ?? "Client";
 
   return (
-    <div className="min-h-screen bg-zinc-50">
-      <div className="mx-auto max-w-5xl px-6 py-10">
-        {showSignupBanner && (
-          <div className="mb-6 flex flex-wrap items-center justify-between gap-3 rounded-lg border border-blue-200 bg-blue-50 p-4">
-            <p className="text-sm text-blue-900">
-              Want to track your progress on this plan?
-            </p>
-            <Link
-              href={`/signup/client?plan=${encodeURIComponent(plan.share_code)}`}
-              className="rounded bg-blue-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-blue-700"
-            >
-              Sign up
-            </Link>
-          </div>
-        )}
-
-        <header className="mb-8 rounded-lg border border-zinc-200 bg-white p-6 shadow-sm">
-          <h1 className="text-3xl font-bold text-zinc-900">{plan.name}</h1>
-          <p className="mt-1 text-sm text-zinc-600">Plan for {clientName}</p>
-          {dateRange && (
-            <p className="mt-2 text-xs font-medium uppercase tracking-wide text-zinc-500">
-              {dateRange}
+    <div className="min-h-screen bg-zinc-950 text-zinc-100">
+      <div className="mx-auto max-w-xl px-5 py-8">
+        <header className="mb-6">
+          <p className="text-xs font-medium uppercase tracking-widest text-emerald-400">
+            {clientName}
+          </p>
+          <h1 className="mt-1 text-3xl font-bold tracking-tight text-white">
+            {plan.name}
+          </h1>
+          {(plan.start_date || plan.end_date) && (
+            <p className="mt-2 text-sm text-zinc-400">
+              {plan.start_date && formatDate(plan.start_date)}
+              {plan.start_date && plan.end_date && " — "}
+              {plan.end_date && formatDate(plan.end_date)}
             </p>
           )}
         </header>
 
-        {totalExercises === 0 ? (
-          <div className="rounded-lg border border-dashed border-zinc-300 bg-white p-10 text-center">
-            <p className="text-sm text-zinc-500">
-              This plan has no exercises yet.
-            </p>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-7">
-            {DAYS.map(({ key, label }) => {
-              const items = byDay.get(key) ?? [];
-              return (
-                <section
-                  key={key}
-                  className="flex min-h-[200px] flex-col rounded-lg border border-zinc-200 bg-zinc-100/60 p-2"
-                >
-                  <h2 className="mb-2 px-1 text-xs font-semibold uppercase tracking-wide text-zinc-700">
-                    {label}
-                  </h2>
-                  <div className="flex flex-1 flex-col gap-2">
-                    {items.length === 0 ? (
-                      <div className="flex flex-1 items-center justify-center rounded border border-dashed border-zinc-300 p-3 text-center text-xs text-zinc-400">
-                        Rest day
-                      </div>
-                    ) : (
-                      items.map((pe, idx) => <ExerciseCard key={idx} pe={pe} />)
-                    )}
+        <PlanDateBanner
+          startDate={plan.start_date}
+          endDate={plan.end_date}
+        />
+
+        <div className="flex flex-col gap-4">
+          {DAYS.map(({ key, label }) => {
+            const items = byDay.get(key) ?? [];
+            return (
+              <DaySection
+                key={key}
+                dayOfWeek={key}
+                label={label}
+                startDate={plan.start_date}
+                endDate={plan.end_date}
+              >
+                {items.length === 0 ? (
+                  <p className="text-sm italic text-zinc-600">Rest day</p>
+                ) : (
+                  <div className="flex flex-col gap-3">
+                    {items.map((pe, idx) => (
+                      <ExerciseCard key={idx} pe={pe} shareCode={plan.share_code} />
+                    ))}
                   </div>
-                </section>
-              );
-            })}
-          </div>
-        )}
+                )}
+              </DaySection>
+            );
+          })}
+        </div>
+
+        <footer className="mt-10 text-center text-xs text-zinc-600">
+          Powered by FitTree
+        </footer>
       </div>
     </div>
   );
 }
 
-function ExerciseCard({ pe }: { pe: PlanExerciseRow }) {
+function ExerciseCard({
+  pe,
+  shareCode,
+}: {
+  pe: PlanShareExercise;
+  shareCode: string;
+}) {
   if (!pe.exercise_name) {
     return (
-      <div className="rounded border border-amber-200 bg-amber-50 p-2 text-xs italic text-amber-700">
+      <div className="rounded-xl border border-amber-500/30 bg-amber-500/10 p-3 text-xs italic text-amber-300">
         Exercise no longer available
       </div>
     );
   }
-  const category = pe.category_name ?? "Uncategorized";
+
   return (
-    <div className="rounded border border-zinc-200 bg-white p-2 shadow-sm">
-      <div className="text-sm font-semibold text-zinc-900">
-        {pe.exercise_name}
-      </div>
-      <div className="mt-0.5 inline-block rounded bg-zinc-100 px-1.5 py-0.5 text-[10px] uppercase tracking-wide text-zinc-600">
-        {category}
-      </div>
-      <div className="mt-2 text-sm text-zinc-800">
-        <span className="font-medium">{pe.sets}</span> ×{" "}
-        <span className="font-medium">{pe.reps}</span>
-        {pe.weight != null && (
-          <span className="ml-1 text-zinc-600">@ {pe.weight}</span>
+    <div className="rounded-xl border border-zinc-800 bg-zinc-900 p-4">
+      <div className="flex items-start justify-between gap-3">
+        <h3 className="text-base font-semibold text-white">
+          {pe.exercise_name}
+        </h3>
+        {pe.video_url && (
+          <a
+            href={pe.video_url}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label={`Watch ${pe.exercise_name} demo`}
+            className="shrink-0 rounded-full bg-emerald-500/15 p-2 text-emerald-400 transition-colors hover:bg-emerald-500/25"
+          >
+            <PlayIcon />
+          </a>
         )}
       </div>
-      {pe.notes && <p className="mt-1 text-xs text-zinc-600">{pe.notes}</p>}
+
+      {pe.category_name && (
+        <span className="mt-2 inline-block rounded-full bg-zinc-800 px-2.5 py-0.5 text-[11px] font-medium uppercase tracking-wide text-zinc-400">
+          {pe.category_name}
+        </span>
+      )}
+
+      <div className="mt-3 flex items-baseline gap-3 text-sm">
+        <span className="font-semibold text-zinc-100">
+          {pe.sets} <span className="text-zinc-500">×</span> {pe.reps}
+        </span>
+        {pe.weight != null && (
+          <span className="text-emerald-400">{pe.weight} kg</span>
+        )}
+      </div>
+
+      {pe.notes && (
+        <p className="mt-2 text-sm leading-relaxed text-zinc-400">{pe.notes}</p>
+      )}
+
+      {pe.id && (
+        <CheckInButton
+          shareCode={shareCode}
+          planExerciseId={pe.id}
+          exerciseName={pe.exercise_name}
+        />
+      )}
     </div>
+  );
+}
+
+function PlayIcon() {
+  return (
+    <svg
+      width="16"
+      height="16"
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      aria-hidden="true"
+    >
+      <path d="M8 5v14l11-7z" />
+    </svg>
   );
 }

@@ -16,6 +16,7 @@ import type { ExerciseWithCategory } from "@/lib/database.types";
 import { DayColumn } from "./day-column";
 import { LibrarySidebar } from "./library-sidebar";
 import { savePlan, type SavePlanInput } from "./actions";
+import { updatePlan, type UpdatePlanInput } from "../actions";
 
 export type PlacedExercise = {
   instanceId: string;
@@ -30,6 +31,16 @@ export type PlacedExercise = {
 
 export type DayKey = 1 | 2 | 3 | 4 | 5 | 6 | 7;
 export type DaysState = Record<DayKey, PlacedExercise[]>;
+
+// Present only in "Edit" mode; absent means "New" mode.
+export type InitialPlanData = {
+  planId: string;
+  clientName: string;
+  planName: string;
+  startDate: string | null;
+  endDate: string | null;
+  days: DaysState;
+};
 
 const DAYS: { key: DayKey; label: string }[] = [
   { key: 1, label: "Monday" },
@@ -55,14 +66,28 @@ function addDaysISO(iso: string, days: number): string {
   return d.toISOString().slice(0, 10);
 }
 
-export function PlanBuilder({ exercises }: { exercises: ExerciseWithCategory[] }) {
-  const [clientName, setClientName] = useState("");
-  const [planName, setPlanName] = useState("");
-  const [startDate, setStartDate] = useState(() => nextMondayISO());
-  const [endDate, setEndDate] = useState(() => addDaysISO(nextMondayISO(), 28));
-  const [days, setDays] = useState<DaysState>({
-    1: [], 2: [], 3: [], 4: [], 5: [], 6: [], 7: [],
-  });
+export function PlanBuilder({
+  exercises,
+  initialData,
+}: {
+  exercises: ExerciseWithCategory[];
+  initialData?: InitialPlanData;
+}) {
+  const mode = initialData ? "edit" : "new";
+
+  const [clientName, setClientName] = useState(
+    () => initialData?.clientName ?? ""
+  );
+  const [planName, setPlanName] = useState(() => initialData?.planName ?? "");
+  const [startDate, setStartDate] = useState(() =>
+    initialData ? initialData.startDate ?? "" : nextMondayISO()
+  );
+  const [endDate, setEndDate] = useState(() =>
+    initialData ? initialData.endDate ?? "" : addDaysISO(nextMondayISO(), 28)
+  );
+  const [days, setDays] = useState<DaysState>(
+    () => initialData?.days ?? { 1: [], 2: [], 3: [], 4: [], 5: [], 6: [], 7: [] }
+  );
   const [error, setError] = useState<string | null>(null);
   const [activeDrag, setActiveDrag] = useState<PlacedExercise | { name: string; category: string } | null>(null);
   const [isSaving, startSaving] = useTransition();
@@ -172,28 +197,48 @@ export function PlanBuilder({ exercises }: { exercises: ExerciseWithCategory[] }
     }));
   }
 
+  function buildDaysPayload() {
+    return Object.fromEntries(
+      (Object.keys(days) as unknown as DayKey[]).map((k) => [
+        String(k),
+        days[k].map((p) => ({
+          exerciseId: p.exerciseId,
+          sets: Number(p.sets) || 0,
+          reps: Number(p.reps) || 0,
+          weight: p.weight.trim() === "" ? null : Number(p.weight),
+          notes: p.notes.trim() === "" ? null : p.notes.trim(),
+        })),
+      ])
+    );
+  }
+
   function onSave() {
     setError(null);
-    if (!clientName.trim()) return setError("Client name is required.");
     if (!planName.trim()) return setError("Plan name is required.");
+
+    if (mode === "edit") {
+      const payload: UpdatePlanInput = {
+        planId: initialData!.planId,
+        planName: planName.trim(),
+        startDate: startDate || null,
+        endDate: endDate || null,
+        days: buildDaysPayload(),
+      };
+      startSaving(async () => {
+        const res = await updatePlan(payload);
+        if (res?.error) setError(res.error);
+      });
+      return;
+    }
+
+    if (!clientName.trim()) return setError("Client name is required.");
 
     const payload: SavePlanInput = {
       clientName: clientName.trim(),
       planName: planName.trim(),
       startDate: startDate || null,
       endDate: endDate || null,
-      days: Object.fromEntries(
-        (Object.keys(days) as unknown as DayKey[]).map((k) => [
-          String(k),
-          days[k].map((p) => ({
-            exerciseId: p.exerciseId,
-            sets: Number(p.sets) || 0,
-            reps: Number(p.reps) || 0,
-            weight: p.weight.trim() === "" ? null : Number(p.weight),
-            notes: p.notes.trim() === "" ? null : p.notes.trim(),
-          })),
-        ])
-      ),
+      days: buildDaysPayload(),
     };
 
     startSaving(async () => {
@@ -215,11 +260,17 @@ export function PlanBuilder({ exercises }: { exercises: ExerciseWithCategory[] }
           <div className="mb-6 rounded-lg border border-zinc-200 bg-white p-4 shadow-sm">
             <div className="flex flex-wrap items-end gap-4">
               <label className="flex flex-col text-xs font-medium text-zinc-700">
-                Client name *
+                {mode === "edit" ? "Client" : "Client name *"}
                 <input
-                  className="mt-1 w-56 rounded border border-zinc-300 px-2 py-1.5 text-sm"
+                  className="mt-1 w-56 rounded border border-zinc-300 px-2 py-1.5 text-sm disabled:bg-zinc-100 disabled:text-zinc-500"
                   value={clientName}
                   onChange={(e) => setClientName(e.target.value)}
+                  disabled={mode === "edit"}
+                  title={
+                    mode === "edit"
+                      ? "The client can't be changed when editing a plan."
+                      : undefined
+                  }
                 />
               </label>
               <label className="flex flex-col text-xs font-medium text-zinc-700">
@@ -254,7 +305,13 @@ export function PlanBuilder({ exercises }: { exercises: ExerciseWithCategory[] }
                 disabled={isSaving}
                 className="ml-auto rounded bg-zinc-900 px-4 py-2 text-sm font-semibold text-white hover:bg-zinc-800 disabled:opacity-50"
               >
-                {isSaving ? "Saving…" : "Save Plan"}
+                {mode === "edit"
+                  ? isSaving
+                    ? "Updating…"
+                    : "Update Plan"
+                  : isSaving
+                    ? "Saving…"
+                    : "Save Plan"}
               </button>
             </div>
             {error && (

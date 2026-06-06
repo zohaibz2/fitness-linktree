@@ -81,3 +81,43 @@ export type PlanExerciseInsert = {
   weight?: number | null;
   notes?: string | null;
 };
+
+// Flat, denormalized shape returned by the get_plan_by_share_code RPC — the
+// single anon-accessible read path for the public /plan/[shareCode] view.
+// (RLS blocks direct nested selects for unauthenticated visitors, so the join
+// is done server-side inside the SECURITY DEFINER function.)
+export type PlanShareExercise = {
+  id: string;
+  day_of_week: number;
+  order_in_day: number;
+  sets: number;
+  reps: number;
+  weight: number | null;
+  notes: string | null;
+  exercise_name: string | null;
+  video_url: string | null;
+  category_name: string | null;
+};
+
+export type PlanShareView = {
+  id: string;
+  name: string;
+  start_date: string | null;
+  end_date: string | null;
+  share_code: string;
+  client_name: string | null;
+  exercises: PlanShareExercise[];
+};
+
+export type ProgressLog = {
+  id: string;
+  client_id: string;
+  plan_exercise_id: string;
+  actual_sets: number | null;
+  actual_reps: number | null;
+  actual_weight: number | null;
+  notes: string | null;
+  media_url: string | null; // object path within the client-uploads bucket
+  coach_feedback: string | null;
+  created_at: string;
+};
