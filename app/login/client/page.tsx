@@ -22,14 +22,14 @@ export default function ClientLoginPage() {
         <button
           type="submit"
           disabled={pending}
-          className="w-full rounded bg-zinc-900 px-4 py-2 text-sm font-semibold text-white hover:bg-zinc-800 disabled:opacity-50"
+          className="w-full rounded bg-brand-deep px-4 py-2 text-sm font-semibold text-white hover:bg-brand-deep/90 disabled:opacity-50"
         >
           {pending ? "Signing in…" : "Sign in"}
         </button>
       </form>
-      <p className="mt-4 text-center text-sm text-zinc-600">
+      <p className="mt-4 text-center text-sm text-brand-deep/80">
         New here?{" "}
-        <Link href="/signup/client" className="font-medium text-zinc-900 hover:underline">
+        <Link href="/signup/client" className="font-medium text-brand-deep hover:underline">
           Create a client account
         </Link>
       </p>

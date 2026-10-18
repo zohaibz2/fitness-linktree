@@ -110,14 +110,14 @@ export default async function PlansListPage() {
 
         <header className="mb-8 flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-zinc-900">Your plans</h1>
-            <p className="text-sm text-zinc-600">
+            <h1 className="text-2xl font-bold text-brand-deep">Your plans</h1>
+            <p className="text-sm text-brand-deep/80">
               All plans you&apos;ve created, newest first.
             </p>
           </div>
           <Link
             href="/dashboard/plans/new"
-            className="rounded bg-zinc-900 px-4 py-2 text-sm font-semibold text-white hover:bg-zinc-800"
+            className="rounded bg-brand-deep px-4 py-2 text-sm font-semibold text-white hover:bg-brand-deep/90"
           >
             Create new plan
           </Link>
@@ -130,11 +130,11 @@ export default async function PlansListPage() {
         )}
 
         {plans.length === 0 ? (
-          <div className="rounded-lg border border-dashed border-zinc-300 bg-white p-12 text-center">
-            <p className="text-sm text-zinc-600">No plans yet.</p>
+          <div className="rounded-lg border border-dashed border-brand-deep/20 bg-white p-12 text-center">
+            <p className="text-sm text-brand-deep/80">No plans yet.</p>
             <Link
               href="/dashboard/plans/new"
-              className="mt-4 inline-block rounded bg-zinc-900 px-4 py-2 text-sm font-semibold text-white hover:bg-zinc-800"
+              className="mt-4 inline-block rounded bg-brand-deep px-4 py-2 text-sm font-semibold text-white hover:bg-brand-deep/90"
             >
               Create your first plan
             </Link>
@@ -144,17 +144,17 @@ export default async function PlansListPage() {
             {plans.map((p) => (
               <li
                 key={p.id}
-                className="rounded-lg border border-zinc-200 bg-white p-4 shadow-sm"
+                className="rounded-lg border border-brand-deep/10 bg-white p-4 shadow-sm"
               >
                 <div className="flex flex-wrap items-start justify-between gap-4">
                   <div className="min-w-0">
-                    <h2 className="text-base font-semibold text-zinc-900">
+                    <h2 className="text-base font-semibold text-brand-deep">
                       {p.name}
                     </h2>
-                    <p className="mt-0.5 text-sm text-zinc-600">
+                    <p className="mt-0.5 text-sm text-brand-deep/80">
                       Client: {p.clients?.name ?? "—"}
                     </p>
-                    <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-xs text-zinc-500">
+                    <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-xs text-brand-deep/75">
                       <span>{formatRange(p.start_date, p.end_date)}</span>
                       <span>Created {formatCreated(p.created_at)}</span>
                     </div>
@@ -163,7 +163,7 @@ export default async function PlansListPage() {
                     <CopyLinkButton shareCode={p.share_code} baseUrl={baseUrl} />
                     <Link
                       href={`/dashboard/plans/edit/${p.id}`}
-                      className="rounded border border-zinc-300 bg-white px-3 py-1.5 text-xs font-semibold text-zinc-700 hover:bg-zinc-50"
+                      className="rounded border border-brand-deep/20 bg-white px-3 py-1.5 text-xs font-semibold text-brand-deep/90 hover:bg-paper"
                     >
                       Edit
                     </Link>
@@ -171,7 +171,7 @@ export default async function PlansListPage() {
                       href={`/plan/${p.share_code}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="rounded bg-zinc-900 px-3 py-1.5 text-xs font-semibold text-white hover:bg-zinc-800"
+                      className="rounded bg-brand-deep px-3 py-1.5 text-xs font-semibold text-white hover:bg-brand-deep/90"
                     >
                       View
                     </a>
@@ -197,7 +197,7 @@ function RecentCheckIns({
 
   return (
     <section className="mb-10">
-      <h2 className="mb-3 text-lg font-bold text-zinc-900">Recent check-ins</h2>
+      <h2 className="mb-3 text-lg font-bold text-brand-deep">Recent check-ins</h2>
       <ul className="space-y-3">
         {checkIns.map((c) => {
           const photo = signedUrls.get(c.id);
@@ -214,7 +214,7 @@ function RecentCheckIns({
           return (
             <li
               key={c.id}
-              className="flex gap-4 rounded-lg border border-zinc-200 bg-white p-4 shadow-sm"
+              className="flex gap-4 rounded-lg border border-brand-deep/10 bg-white p-4 shadow-sm"
             >
               {photo ? (
                 // eslint-disable-next-line @next/next/no-img-element
@@ -224,29 +224,29 @@ function RecentCheckIns({
                   className="h-16 w-16 shrink-0 rounded-md object-cover"
                 />
               ) : (
-                <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-md bg-zinc-100 text-[10px] uppercase tracking-wide text-zinc-400">
+                <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-md bg-paper text-[10px] uppercase tracking-wide text-brand-deep/60">
                   No photo
                 </div>
               )}
 
               <div className="min-w-0 flex-1">
                 <div className="flex flex-wrap items-baseline justify-between gap-x-3">
-                  <p className="text-sm font-semibold text-zinc-900">
+                  <p className="text-sm font-semibold text-brand-deep">
                     {c.client_name ?? "Client"}
-                    <span className="font-normal text-zinc-500">
+                    <span className="font-normal text-brand-deep/75">
                       {" "}
                       · {exerciseName}
                     </span>
                   </p>
-                  <span className="text-xs text-zinc-400">
+                  <span className="text-xs text-brand-deep/60">
                     {formatCreated(c.created_at)}
                   </span>
                 </div>
                 {stats && (
-                  <p className="mt-0.5 text-sm text-zinc-700">{stats}</p>
+                  <p className="mt-0.5 text-sm text-brand-deep/90">{stats}</p>
                 )}
                 {c.notes && (
-                  <p className="mt-0.5 text-xs text-zinc-500">{c.notes}</p>
+                  <p className="mt-0.5 text-xs text-brand-deep/75">{c.notes}</p>
                 )}
                 <CoachFeedbackForm logId={c.id} initial={c.coach_feedback} />
               </div>

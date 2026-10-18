@@ -45,12 +45,12 @@ export function CoachFeedbackForm({
     return (
       <div className="mt-2">
         {feedback ? (
-          <div className="flex items-start justify-between gap-2 rounded border border-zinc-200 bg-zinc-50 px-2 py-1.5">
-            <p className="text-xs text-zinc-700">{feedback}</p>
+          <div className="flex items-start justify-between gap-2 rounded border border-brand-deep/10 bg-paper px-2 py-1.5">
+            <p className="text-xs text-brand-deep/90">{feedback}</p>
             <button
               type="button"
               onClick={open}
-              className="shrink-0 text-xs font-semibold text-zinc-500 hover:text-zinc-800"
+              className="shrink-0 text-xs font-semibold text-brand-deep/75 hover:text-brand-deep"
             >
               Edit
             </button>
@@ -59,7 +59,7 @@ export function CoachFeedbackForm({
           <button
             type="button"
             onClick={open}
-            className="rounded border border-zinc-300 bg-white px-2.5 py-1 text-xs font-semibold text-zinc-700 hover:bg-zinc-50"
+            className="rounded border border-brand-deep/20 bg-white px-2.5 py-1 text-xs font-semibold text-brand-deep/90 hover:bg-paper"
           >
             Add Feedback
           </button>
@@ -76,14 +76,14 @@ export function CoachFeedbackForm({
         onChange={(e) => setDraft(e.target.value)}
         rows={2}
         placeholder="Reply to this check-in…"
-        className="w-full rounded border border-zinc-300 px-2 py-1.5 text-xs text-zinc-800 focus:border-zinc-500 focus:outline-none"
+        className="w-full rounded border border-brand-deep/20 px-2 py-1.5 text-xs text-brand-deep focus:border-brand-deep/40 focus:outline-none"
       />
       <div className="mt-1.5 flex items-center gap-2">
         <button
           type="button"
           onClick={save}
           disabled={isPending}
-          className="rounded bg-zinc-900 px-2.5 py-1 text-xs font-semibold text-white hover:bg-zinc-800 disabled:opacity-50"
+          className="rounded bg-brand-deep px-2.5 py-1 text-xs font-semibold text-white hover:bg-brand-deep/90 disabled:opacity-50"
         >
           {isPending ? "Saving…" : "Save"}
         </button>
@@ -91,7 +91,7 @@ export function CoachFeedbackForm({
           type="button"
           onClick={cancel}
           disabled={isPending}
-          className="rounded border border-zinc-300 bg-white px-2.5 py-1 text-xs font-semibold text-zinc-700 hover:bg-zinc-50 disabled:opacity-50"
+          className="rounded border border-brand-deep/20 bg-white px-2.5 py-1 text-xs font-semibold text-brand-deep/90 hover:bg-paper disabled:opacity-50"
         >
           Cancel
         </button>

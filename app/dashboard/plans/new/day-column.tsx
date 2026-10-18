@@ -24,14 +24,14 @@ export function DayColumn({
   });
 
   return (
-    <div className="flex min-h-[300px] flex-col rounded-lg border border-zinc-200 bg-zinc-100/60 p-2">
-      <div className="mb-2 px-1 text-xs font-semibold uppercase tracking-wide text-zinc-700">
+    <div className="flex min-h-[300px] flex-col rounded-lg border border-brand-deep/10 bg-paper/60 p-2">
+      <div className="mb-2 px-1 text-xs font-semibold uppercase tracking-wide text-brand-deep/90">
         {label}
       </div>
       <div
         ref={setNodeRef}
         className={`flex flex-1 flex-col gap-2 rounded p-1 transition ${
-          isOver ? "ring-2 ring-blue-400 bg-blue-50/40" : ""
+          isOver ? "ring-2 ring-brand bg-brand-tint/30/40" : ""
         }`}
       >
         <SortableContext
@@ -49,7 +49,7 @@ export function DayColumn({
           ))}
         </SortableContext>
         {items.length === 0 && (
-          <div className="flex flex-1 items-center justify-center rounded border border-dashed border-zinc-300 p-3 text-center text-xs text-zinc-400">
+          <div className="flex flex-1 items-center justify-center rounded border border-dashed border-brand-deep/20 p-3 text-center text-xs text-brand-deep/60">
             Drop here
           </div>
         )}

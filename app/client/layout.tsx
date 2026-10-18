@@ -8,7 +8,7 @@ export default async function ClientLayout({
 }) {
   const user = await requireClient();
   return (
-    <div className="min-h-screen bg-zinc-50">
+    <div className="min-h-screen bg-paper">
       <ClientNav email={user.email ?? ""} />
       {children}
     </div>

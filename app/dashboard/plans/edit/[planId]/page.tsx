@@ -116,8 +116,8 @@ export default async function EditPlanPage({
     <div>
       <div className="mx-auto max-w-[1400px] px-6 py-8">
         <header className="mb-6">
-          <h1 className="text-2xl font-bold text-zinc-900">Edit Plan</h1>
-          <p className="text-sm text-zinc-600">
+          <h1 className="text-2xl font-bold text-brand-deep">Edit Plan</h1>
+          <p className="text-sm text-brand-deep/80">
             Rearrange exercises and update the plan details, then save changes.
           </p>
         </header>

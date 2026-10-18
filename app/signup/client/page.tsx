@@ -18,7 +18,7 @@ export default function ClientSignupPage({
   return (
     <AuthShell title="Create a client account">
       {plan && (
-        <p className="mb-4 rounded border border-blue-200 bg-blue-50 p-2 text-sm text-blue-800">
+        <p className="mb-4 rounded border border-brand-tint bg-brand-tint/30 p-2 text-sm text-brand-deep">
           You&apos;ll be linked to the plan you opened.
         </p>
       )}
@@ -34,14 +34,14 @@ export default function ClientSignupPage({
         <button
           type="submit"
           disabled={pending}
-          className="w-full rounded bg-zinc-900 px-4 py-2 text-sm font-semibold text-white hover:bg-zinc-800 disabled:opacity-50"
+          className="w-full rounded bg-brand-deep px-4 py-2 text-sm font-semibold text-white hover:bg-brand-deep/90 disabled:opacity-50"
         >
           {pending ? "Redirecting…" : "Sign up"}
         </button>
       </form>
-      <p className="mt-4 text-center text-sm text-zinc-600">
+      <p className="mt-4 text-center text-sm text-brand-deep/80">
         Already have an account?{" "}
-        <Link href="/login/client" className="font-medium text-zinc-900 hover:underline">
+        <Link href="/login/client" className="font-medium text-brand-deep hover:underline">
           Sign in
         </Link>
       </p>

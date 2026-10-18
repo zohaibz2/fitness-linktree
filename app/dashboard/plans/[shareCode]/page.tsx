@@ -30,21 +30,21 @@ export default async function PlanConfirmationPage({
   return (
     <div>
       <div className="mx-auto max-w-2xl px-6 py-16">
-        <div className="rounded-lg border border-zinc-200 bg-white p-8 shadow-sm">
-          <h1 className="text-2xl font-bold text-zinc-900">Plan saved.</h1>
-          <p className="mt-1 text-sm text-zinc-600">
+        <div className="rounded-lg border border-brand-deep/10 bg-white p-8 shadow-sm">
+          <h1 className="text-2xl font-bold text-brand-deep">Plan saved.</h1>
+          <p className="mt-1 text-sm text-brand-deep/80">
             <span className="font-medium">{plan.name}</span> for {clientName}.
           </p>
 
           <div className="mt-6">
-            <label className="text-xs font-semibold uppercase tracking-wide text-zinc-500">
+            <label className="text-xs font-semibold uppercase tracking-wide text-brand-deep/75">
               Share link
             </label>
             <div className="mt-1 flex gap-2">
               <input
                 readOnly
                 value={shareUrl}
-                className="flex-1 rounded border border-zinc-300 bg-zinc-50 px-3 py-2 text-sm"
+                className="flex-1 rounded border border-brand-deep/20 bg-paper px-3 py-2 text-sm"
               />
               <CopyButton value={shareUrl} />
             </div>
@@ -53,7 +53,7 @@ export default async function PlanConfirmationPage({
           <div className="mt-6 flex gap-3">
             <Link
               href="/dashboard/plans/new"
-              className="rounded border border-zinc-300 bg-white px-4 py-2 text-sm font-medium text-zinc-700 hover:bg-zinc-50"
+              className="rounded border border-brand-deep/20 bg-white px-4 py-2 text-sm font-medium text-brand-deep/90 hover:bg-paper"
             >
               Create another
             </Link>

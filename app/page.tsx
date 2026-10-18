@@ -94,7 +94,7 @@ export default function Home() {
         <div className="mt-8">
           <Link
             href="/signup/trainer"
-            className="inline-block rounded-full bg-white px-12 py-4 font-sans font-semibold text-[#0A0A0A] shadow-lg transition hover:bg-zinc-100"
+            className="inline-block rounded-full bg-white px-12 py-4 font-sans font-semibold text-[#0A0A0A] shadow-lg transition hover:bg-paper"
           >
             Get started
           </Link>
