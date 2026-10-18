@@ -115,7 +115,7 @@ export default async function PublicPlanPage({
         </div>
 
         <footer className="mt-10 text-center text-xs text-zinc-600">
-          Powered by FitTree
+          Powered by Trainwithzohaib
         </footer>
       </div>
     </div>

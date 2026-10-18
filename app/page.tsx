@@ -84,7 +84,7 @@ export default function Home() {
       {/* Centered hero content */}
       <div className="relative z-10 px-6 text-center">
         <h1 className="font-display text-6xl font-bold text-white sm:text-7xl">
-          FitTree.
+          Trainwithzohaib.
         </h1>
         <p className="mt-6 font-sans text-lg font-normal text-white">
           Custom training plans with one shared link.

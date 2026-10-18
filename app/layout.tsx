@@ -15,9 +15,9 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Fitness Linktree",
+  title: "Trainwithzohaib",
   description:
-    "The simplest way to deliver workout plans to your online clients.",
+    "Own your training. Personal coaching plans, delivered with one link.",
 };
 
 export default function RootLayout({
