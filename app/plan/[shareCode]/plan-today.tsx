@@ -69,7 +69,7 @@ export function PlanDateBanner({
 
   if (state === "before" && startDate) {
     return (
-      <div className="mb-6 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800">
+      <div className="mb-6 rounded-xl border border-brand-tint bg-brand-tint/30 px-4 py-3 text-sm text-brand-deep">
         This plan starts on{" "}
         <span className="font-semibold">{formatLongDate(startDate)}</span>.
       </div>
@@ -78,9 +78,9 @@ export function PlanDateBanner({
 
   if (state === "after" && endDate) {
     return (
-      <div className="mb-6 rounded-xl border border-zinc-200 bg-zinc-100 px-4 py-3 text-sm text-zinc-500">
+      <div className="mb-6 rounded-xl border border-brand-deep/10 bg-paper px-4 py-3 text-sm text-brand-deep/75">
         This plan ended on{" "}
-        <span className="font-semibold text-zinc-700">
+        <span className="font-semibold text-brand-deep/90">
           {formatLongDate(endDate)}
         </span>
         .
@@ -114,16 +114,16 @@ export function DaySection({
     <section
       className={`rounded-2xl border p-4 shadow-sm transition-colors ${
         isToday
-          ? "border-emerald-500 bg-emerald-50"
-          : "border-zinc-200 bg-white"
+          ? "border-brand bg-brand-tint/30"
+          : "border-brand-deep/10 bg-white"
       }`}
     >
       <div className="mb-3 flex items-center gap-2">
-        <h2 className="text-base font-semibold tracking-tight text-zinc-900">
+        <h2 className="text-base font-semibold tracking-tight text-brand-deep">
           {label}
         </h2>
         {isToday && (
-          <span className="rounded-full bg-emerald-600 px-2 py-0.5 text-[11px] font-bold uppercase tracking-wide text-white">
+          <span className="rounded-full bg-brand-deep px-2 py-0.5 text-[11px] font-bold uppercase tracking-wide text-white">
             Today
           </span>
         )}

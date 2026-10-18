@@ -13,7 +13,7 @@ export default function TrainerSignupPage() {
     <div className="flex min-h-screen">
       {/* Left: full-bleed gym photo, hidden below md. Dark gradient is the
           fallback that shows through if the image is missing. */}
-      <div className="relative hidden w-[45%] bg-gradient-to-br from-zinc-900 to-black md:block">
+      <div className="relative hidden w-[45%] bg-gradient-to-br from-brand-deep to-brand-deep md:block">
         <img
           src="/auth-hero.png"
           alt=""
@@ -28,10 +28,10 @@ export default function TrainerSignupPage() {
           orange margin all around (p-6). */}
       <div className="flex w-full items-center justify-center bg-[#FE6E3E] px-6 py-12 md:w-[55%]">
         <div className="w-full max-w-[520px] rounded-3xl bg-white p-10 shadow-2xl">
-          <h1 className="font-display text-2xl font-bold leading-tight text-zinc-900">
+          <h1 className="font-display text-2xl font-bold leading-tight text-brand-deep">
             Sign Up To Your Account
           </h1>
-          <p className="mt-2 font-sans text-sm text-zinc-500">
+          <p className="mt-2 font-sans text-sm text-brand-deep/75">
             Custom training plans with one shared link. Track every rep, every set, live.
           </p>
 
@@ -61,14 +61,14 @@ export default function TrainerSignupPage() {
             </button>
           </form>
 
-          <div className="mt-3 text-center font-sans text-sm text-zinc-400">Or</div>
+          <div className="mt-3 text-center font-sans text-sm text-brand-deep/60">Or</div>
 
           <div className="mt-3 space-y-2">
             <OAuthButton label="Continue with Google" icon={<GoogleIcon />} />
             <OAuthButton label="Continue with Apple" icon={<AppleIcon />} />
           </div>
 
-          <p className="mt-5 text-center font-sans text-sm text-zinc-600">
+          <p className="mt-5 text-center font-sans text-sm text-brand-deep/80">
             Already have an account?{" "}
             <Link
               href="/login/trainer"
@@ -94,14 +94,14 @@ function PillField({
 }) {
   return (
     <label className="block">
-      <span className="block font-sans text-sm font-medium text-zinc-700">
+      <span className="block font-sans text-sm font-medium text-brand-deep/90">
         {label}
       </span>
       <input
         name={name}
         type={type}
         required
-        className="mt-1.5 h-12 w-full rounded-xl bg-[#F0F0F0] px-4 font-sans text-sm text-zinc-900 outline-none placeholder:text-zinc-400 focus:ring-2 focus:ring-[#FE6E3E]/40"
+        className="mt-1.5 h-12 w-full rounded-xl bg-[#F0F0F0] px-4 font-sans text-sm text-brand-deep outline-none placeholder:text-brand-deep/60 focus:ring-2 focus:ring-[#FE6E3E]/40"
       />
     </label>
   );
@@ -115,11 +115,11 @@ function OAuthButton({ label, icon }: { label: string; icon: ReactNode }) {
       disabled
       aria-disabled="true"
       title="Coming soon"
-      className="flex h-12 w-full cursor-not-allowed items-center justify-center gap-3 rounded-xl border border-zinc-200 bg-white font-sans text-sm font-medium text-zinc-700 opacity-60"
+      className="flex h-12 w-full cursor-not-allowed items-center justify-center gap-3 rounded-xl border border-brand-deep/10 bg-white font-sans text-sm font-medium text-brand-deep/90 opacity-60"
     >
       {icon}
       <span>{label}</span>
-      <span className="text-xs text-zinc-400">(Coming soon)</span>
+      <span className="text-xs text-brand-deep/60">(Coming soon)</span>
     </button>
   );
 }

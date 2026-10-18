@@ -31,7 +31,7 @@ export function PlacedExerciseCard({
     <div
       ref={setNodeRef}
       style={style}
-      className="rounded border border-zinc-200 bg-white p-2 shadow-sm"
+      className="rounded border border-brand-deep/10 bg-white p-2 shadow-sm"
     >
       <div className="flex items-start justify-between gap-2">
         <div
@@ -39,10 +39,10 @@ export function PlacedExerciseCard({
           {...listeners}
           className="min-w-0 flex-1 cursor-grab touch-none active:cursor-grabbing"
         >
-          <div className="truncate text-sm font-semibold text-zinc-900">
+          <div className="truncate text-sm font-semibold text-brand-deep">
             {item.name}
           </div>
-          <div className="truncate text-[10px] uppercase tracking-wide text-zinc-500">
+          <div className="truncate text-[10px] uppercase tracking-wide text-brand-deep/75">
             {item.category}
           </div>
         </div>
@@ -50,13 +50,13 @@ export function PlacedExerciseCard({
           type="button"
           onClick={() => onRemove(day, item.instanceId)}
           aria-label="Remove"
-          className="rounded px-1 text-zinc-400 hover:bg-zinc-100 hover:text-red-600"
+          className="rounded px-1 text-brand-deep/60 hover:bg-paper hover:text-red-600"
         >
           ×
         </button>
       </div>
       <div className="mt-2 grid grid-cols-2 gap-1.5">
-        <label className="flex flex-col text-[10px] text-zinc-500">
+        <label className="flex flex-col text-[10px] text-brand-deep/75">
           Sets
           <input
             type="number"
@@ -65,10 +65,10 @@ export function PlacedExerciseCard({
             onChange={(e) =>
               onUpdate(day, item.instanceId, { sets: Number(e.target.value) })
             }
-            className="rounded border border-zinc-300 px-1 py-0.5 text-xs"
+            className="rounded border border-brand-deep/20 px-1 py-0.5 text-xs"
           />
         </label>
-        <label className="flex flex-col text-[10px] text-zinc-500">
+        <label className="flex flex-col text-[10px] text-brand-deep/75">
           Reps
           <input
             type="number"
@@ -77,10 +77,10 @@ export function PlacedExerciseCard({
             onChange={(e) =>
               onUpdate(day, item.instanceId, { reps: Number(e.target.value) })
             }
-            className="rounded border border-zinc-300 px-1 py-0.5 text-xs"
+            className="rounded border border-brand-deep/20 px-1 py-0.5 text-xs"
           />
         </label>
-        <label className="col-span-2 flex flex-col text-[10px] text-zinc-500">
+        <label className="col-span-2 flex flex-col text-[10px] text-brand-deep/75">
           Weight
           <input
             type="number"
@@ -89,10 +89,10 @@ export function PlacedExerciseCard({
             onChange={(e) =>
               onUpdate(day, item.instanceId, { weight: e.target.value })
             }
-            className="rounded border border-zinc-300 px-1 py-0.5 text-xs"
+            className="rounded border border-brand-deep/20 px-1 py-0.5 text-xs"
           />
         </label>
-        <label className="col-span-2 flex flex-col text-[10px] text-zinc-500">
+        <label className="col-span-2 flex flex-col text-[10px] text-brand-deep/75">
           Notes
           <input
             type="text"
@@ -100,7 +100,7 @@ export function PlacedExerciseCard({
             onChange={(e) =>
               onUpdate(day, item.instanceId, { notes: e.target.value })
             }
-            className="rounded border border-zinc-300 px-1 py-0.5 text-xs"
+            className="rounded border border-brand-deep/20 px-1 py-0.5 text-xs"
           />
         </label>
       </div>

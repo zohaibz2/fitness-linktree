@@ -66,17 +66,17 @@ export default async function PublicPlanPage({
   const clientName = plan.client_name ?? "Client";
 
   return (
-    <div className="min-h-screen bg-zinc-50 text-zinc-900">
+    <div className="min-h-screen bg-paper text-brand-deep">
       <div className="mx-auto max-w-xl px-5 py-8">
         <header className="mb-6">
-          <p className="text-xs font-medium uppercase tracking-widest text-emerald-600">
+          <p className="text-xs font-medium uppercase tracking-widest text-brand-deep">
             {clientName}
           </p>
-          <h1 className="mt-1 text-3xl font-bold tracking-tight text-zinc-900">
+          <h1 className="mt-1 text-3xl font-bold tracking-tight text-brand-deep">
             {plan.name}
           </h1>
           {(plan.start_date || plan.end_date) && (
-            <p className="mt-2 text-sm text-zinc-500">
+            <p className="mt-2 text-sm text-brand-deep/75">
               {plan.start_date && formatDate(plan.start_date)}
               {plan.start_date && plan.end_date && " — "}
               {plan.end_date && formatDate(plan.end_date)}
@@ -101,7 +101,7 @@ export default async function PublicPlanPage({
                 endDate={plan.end_date}
               >
                 {items.length === 0 ? (
-                  <p className="text-sm italic text-zinc-400">Rest day</p>
+                  <p className="text-sm italic text-brand-deep/60">Rest day</p>
                 ) : (
                   <div className="flex flex-col gap-3">
                     {items.map((pe, idx) => (
@@ -114,8 +114,8 @@ export default async function PublicPlanPage({
           })}
         </div>
 
-        <footer className="mt-10 text-center text-xs text-zinc-600">
-          Powered by FitTree
+        <footer className="mt-10 text-center text-xs text-brand-deep/80">
+          Powered by Trainwithzohaib
         </footer>
       </div>
     </div>
@@ -138,9 +138,9 @@ function ExerciseCard({
   }
 
   return (
-    <div className="rounded-xl border border-zinc-200 bg-white p-4 shadow-sm">
+    <div className="rounded-xl border border-brand-deep/10 bg-white p-4 shadow-sm">
       <div className="flex items-start justify-between gap-3">
-        <h3 className="text-base font-semibold text-zinc-900">
+        <h3 className="text-base font-semibold text-brand-deep">
           {pe.exercise_name}
         </h3>
         {pe.video_url && (
@@ -149,7 +149,7 @@ function ExerciseCard({
             target="_blank"
             rel="noopener noreferrer"
             aria-label={`Watch ${pe.exercise_name} demo`}
-            className="shrink-0 rounded-full bg-emerald-50 p-2 text-emerald-600 transition-colors hover:bg-emerald-100"
+            className="shrink-0 rounded-full bg-brand-tint/30 p-2 text-brand-deep transition-colors hover:bg-brand-tint/50"
           >
             <PlayIcon />
           </a>
@@ -157,22 +157,22 @@ function ExerciseCard({
       </div>
 
       {pe.category_name && (
-        <span className="mt-2 inline-block rounded-full bg-zinc-100 px-2.5 py-0.5 text-[11px] font-medium uppercase tracking-wide text-zinc-600">
+        <span className="mt-2 inline-block rounded-full bg-paper px-2.5 py-0.5 text-[11px] font-medium uppercase tracking-wide text-brand-deep/80">
           {pe.category_name}
         </span>
       )}
 
       <div className="mt-3 flex items-baseline gap-3 text-sm">
-        <span className="font-semibold text-zinc-900">
-          {pe.sets} <span className="text-zinc-400">×</span> {pe.reps}
+        <span className="font-semibold text-brand-deep">
+          {pe.sets} <span className="text-brand-deep/60">×</span> {pe.reps}
         </span>
         {pe.weight != null && (
-          <span className="text-emerald-600">{pe.weight} kg</span>
+          <span className="text-brand-deep">{pe.weight} kg</span>
         )}
       </div>
 
       {pe.notes && (
-        <p className="mt-2 text-sm leading-relaxed text-zinc-500">{pe.notes}</p>
+        <p className="mt-2 text-sm leading-relaxed text-brand-deep/75">{pe.notes}</p>
       )}
 
       {pe.id && (

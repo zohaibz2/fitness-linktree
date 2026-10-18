@@ -17,8 +17,8 @@ export default async function NewPlanPage() {
     <div>
       <div className="mx-auto max-w-[1400px] px-6 py-8">
         <header className="mb-6">
-          <h1 className="text-2xl font-bold text-zinc-900">New Plan</h1>
-          <p className="text-sm text-zinc-600">
+          <h1 className="text-2xl font-bold text-brand-deep">New Plan</h1>
+          <p className="text-sm text-brand-deep/80">
             Drag exercises from the library into days, then save.
           </p>
         </header>

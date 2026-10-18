@@ -48,7 +48,7 @@ export default function WaitlistForm() {
         <button
           onClick={handleWaitlist}
           disabled={status === "loading"}
-          className="rounded-full bg-white px-8 py-4 font-sans font-semibold text-[#0A0A0A] shadow-lg transition hover:bg-zinc-100 disabled:opacity-60"
+          className="rounded-full bg-white px-8 py-4 font-sans font-semibold text-[#0A0A0A] shadow-lg transition hover:bg-paper disabled:opacity-60"
         >
           {status === "loading" ? "Joining..." : "Join Waitlist"}
         </button>

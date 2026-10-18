@@ -38,8 +38,8 @@ export default async function ClientDashboardPage() {
   return (
     <div className="mx-auto max-w-5xl px-6 py-10">
       <header className="mb-8">
-        <h1 className="text-2xl font-bold text-zinc-900">My plans</h1>
-        <p className="text-sm text-zinc-600">
+        <h1 className="text-2xl font-bold text-brand-deep">My plans</h1>
+        <p className="text-sm text-brand-deep/80">
           Plans your trainer has shared with you.
         </p>
       </header>
@@ -51,8 +51,8 @@ export default async function ClientDashboardPage() {
       )}
 
       {plans.length === 0 ? (
-        <div className="rounded-lg border border-dashed border-zinc-300 bg-white p-12 text-center">
-          <p className="text-sm text-zinc-600">
+        <div className="rounded-lg border border-dashed border-brand-deep/20 bg-white p-12 text-center">
+          <p className="text-sm text-brand-deep/80">
             No plans yet. Your trainer will share a link with you.
           </p>
         </div>
@@ -61,17 +61,17 @@ export default async function ClientDashboardPage() {
           {plans.map((p) => (
             <li
               key={p.id}
-              className="flex items-center justify-between rounded-lg border border-zinc-200 bg-white p-4 shadow-sm"
+              className="flex items-center justify-between rounded-lg border border-brand-deep/10 bg-white p-4 shadow-sm"
             >
               <div>
-                <h2 className="text-base font-semibold text-zinc-900">{p.name}</h2>
-                <p className="mt-0.5 text-xs text-zinc-500">
+                <h2 className="text-base font-semibold text-brand-deep">{p.name}</h2>
+                <p className="mt-0.5 text-xs text-brand-deep/75">
                   {formatRange(p.start_date, p.end_date)}
                 </p>
               </div>
               <Link
                 href={`/plan/${p.share_code}`}
-                className="rounded bg-zinc-900 px-3 py-1.5 text-xs font-semibold text-white hover:bg-zinc-800"
+                className="rounded bg-brand-deep px-3 py-1.5 text-xs font-semibold text-white hover:bg-brand-deep/90"
               >
                 Open
               </Link>

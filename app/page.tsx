@@ -84,7 +84,7 @@ export default function Home() {
       {/* Centered hero content */}
       <div className="relative z-10 px-6 text-center">
         <h1 className="font-display text-6xl font-bold text-white sm:text-7xl">
-          FitTree.
+          Trainwithzohaib.
         </h1>
         <p className="mt-6 font-sans text-lg font-normal text-white">
           Custom training plans with one shared link.
@@ -94,7 +94,7 @@ export default function Home() {
         <div className="mt-8">
           <Link
             href="/signup/trainer"
-            className="inline-block rounded-full bg-white px-12 py-4 font-sans font-semibold text-[#0A0A0A] shadow-lg transition hover:bg-zinc-100"
+            className="inline-block rounded-full bg-white px-12 py-4 font-sans font-semibold text-[#0A0A0A] shadow-lg transition hover:bg-paper"
           >
             Get started
           </Link>
